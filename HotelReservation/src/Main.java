@@ -1,10 +1,6 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.*;
 import java.util.Scanner;
-import java.sql.SQLException;
 import java.util.Scanner;
-import java.sql.Statement;
-import java.sql.ResultSet;
 
 
 public class Main {
@@ -30,6 +26,7 @@ public class Main {
                 Scanner scanner=new Scanner(System.in);
                 System.out.println("press 1 for reservaion");
                 System.out.println("press 2 for view reservation");
+                System.out.println("press 3 for get room number");
                 System.out.println("press 0 for exiting");
                 System.out.println("enter your choice:1");
 
@@ -41,6 +38,9 @@ public class Main {
                         break;
                     case 2:
                         viewReservation(connection);
+                        break;
+                    case 3:
+                        getRoomNumber(connection,scanner);
                         break;
                     case 0:
                         flag=false;
@@ -119,6 +119,36 @@ public class Main {
             else {
                 System.out.println("resrvation failed");
             }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void getRoomNumber(Connection connection,Scanner scanner){
+
+        System.out.println("enter reservation id:");
+        int reservationId=scanner.nextInt();
+        System.out.println("enter guest name");
+        String guestname=scanner.next();
+
+        //prepared statement query
+        String query="select room_number from reservations where reservation_id=? AND guest_name =?";
+
+        try {
+            //preparesd statement
+            PreparedStatement preparedStatement=connection.prepareStatement(query);
+            preparedStatement.setInt(1,reservationId);
+            preparedStatement.setString(2,guestname);
+            ResultSet resultSet=preparedStatement.executeQuery();
+
+            if (resultSet.next()){
+                int roomnumber=resultSet.getInt("room_number");
+                System.out.println("Room no for reservation id: "+reservationId+" and guest name:"+guestname+" is: "+roomnumber);
+            }
+            else {
+                System.out.println("reservation not found for the given guest name and id:");
+            }
+
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
