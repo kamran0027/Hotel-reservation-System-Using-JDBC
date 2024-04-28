@@ -27,6 +27,7 @@ public class Main {
                 System.out.println("press 1 for reservaion");
                 System.out.println("press 2 for view reservation");
                 System.out.println("press 3 for get room number");
+                System.out.println("press  for delete resrvation");
                 System.out.println("press 0 for exiting");
                 System.out.println("enter your choice:1");
 
@@ -41,6 +42,9 @@ public class Main {
                         break;
                     case 3:
                         getRoomNumber(connection,scanner);
+                        break;
+                    case 4:
+                        deletereservayion(connection,scanner);
                         break;
                     case 0:
                         flag=false;
@@ -152,5 +156,45 @@ public class Main {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public static void deletereservayion(Connection connection,Scanner scanner){
+        System.out.println("enter reservation id:");
+        int reservationId= scanner.nextInt();
+
+        if(!resrvationExist(connection,reservationId)){
+            System.out.println("resrvation not found at given id...");
+            return;
+        }
+        String sql="delete from reservations where reservation_id=?";
+
+        try {
+            PreparedStatement preparedStatement=connection.prepareStatement(sql);
+            preparedStatement.setInt(1,reservationId);
+            int affect=preparedStatement.executeUpdate();
+
+            if(affect>0){
+                System.out.println("reservation delete");
+            }
+            else {
+                System.out.println("deletion fail");
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static  boolean resrvationExist(Connection connection,int reservationid){
+        String query="select reservation_id from reservations where reservation_id=?";
+        try {
+            PreparedStatement preparedStatement=connection.prepareStatement(query);
+            preparedStatement.setInt(1,reservationid);
+            ResultSet resultSet=preparedStatement.executeQuery();
+            return resultSet.next();//if there is a result, then reservation exixt
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+
     }
 }
