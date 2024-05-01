@@ -29,7 +29,7 @@ public class Main {
                 System.out.println("press 3 for get room number");
                 System.out.println("press  for delete resrvation");
                 System.out.println("press 0 for exiting");
-                System.out.println("enter your choice:1");
+                System.out.println("enter your choice: ");
 
                 int key=scanner.nextInt();
                 boolean flag=true;
